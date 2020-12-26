@@ -31,10 +31,10 @@ public class MyResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response createGame(PlayerDto player, @Context UriInfo uriInfo){
 
-        GameDto gameDto = QoQService.createGame(player);
+        NewGameDto gameDto = QoQService.createGame(player);
       if(gameDto!=null){
           UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-          uriBuilder.path(Integer.toString(gameDto.getId()));
+          uriBuilder.path(Integer.toString(gameDto.getGameId()));
           return Response.created(uriBuilder.build()).entity(gameDto).build();
       }
       return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();
@@ -45,10 +45,10 @@ public class MyResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response movePlayer(@PathParam("id") Integer gameId, @Context UriInfo uriInfo)
     {
-        DungeonDto currentDungeonDto = QoQService.movePlayer(gameId);
+        MovePlayerDto currentDungeonDto = QoQService.movePlayer(gameId);
         if(currentDungeonDto != null){
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-            uriBuilder.path(Integer.toString(currentDungeonDto.getId()));
+            uriBuilder.path(Integer.toString(currentDungeonDto.getDungeonId()));
             return Response.created(uriBuilder.build()).entity(currentDungeonDto).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();
@@ -59,10 +59,9 @@ public class MyResource {
     @Consumes({MediaType.APPLICATION_JSON})
     public Response fightWithMonster(@PathParam("id") Integer gameId, AttackDto attack , @Context UriInfo uriInfo)
     {
-        DungeonDto currentDungeonDto = QoQService.fightWithMonster(gameId, attack);
+        FightResponseDto currentDungeonDto = QoQService.fightWithMonster(gameId, attack);
         if(currentDungeonDto != null){
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-            uriBuilder.path(Integer.toString(currentDungeonDto.getId()));
             return Response.created(uriBuilder.build()).entity(currentDungeonDto).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();

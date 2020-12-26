@@ -1,36 +1,28 @@
 package ba.codecta.academy.services.model;
 
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class PlayerDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer id;
-    private Integer healingPoting = 100;
-    private Integer health = 100;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double healingPoting = 100.0;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Double health = 1000.0;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer score = 0;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private InventoryDto playerInventory;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String name;
-    private DungeonDto dungeonDto;
-    public String getName() {
-        return name;
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private DungeonDto currentDungeon;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private WeaponDto weapon;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private MapDto map;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getScore() {
-        return score;
-    }
-
-
-    public DungeonDto getDungeonDto() {
-        return dungeonDto;
-    }
-
-    public void setDungeonDto(DungeonDto dungeonDto) {
-        this.dungeonDto = dungeonDto;
-    }
-
-    public void setScore(Integer score) {
-        this.score = score;
-    }
 
     public Integer getId() {
         return id;
@@ -40,19 +32,67 @@ public class PlayerDto {
         this.id = id;
     }
 
-    public Integer getHealingPoting() {
+    public Double getHealingPoting() {
         return healingPoting;
     }
 
-    public void setHealingPoting(Integer healthPoints) {
-        this.healingPoting = healthPoints;
+    public void setHealingPoting(Double healingPoting) {
+        this.healingPoting = healingPoting;
     }
 
-    public Integer getHealth() {
+    public Double getHealth() {
         return health;
     }
 
-    public void setHealth(Integer health) {
+    public void setHealth(Double health) {
         this.health = health;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public InventoryDto getPlayerInventory() {
+        return playerInventory;
+    }
+
+    public void setPlayerInventory(InventoryDto playerInventory) {
+        this.playerInventory = playerInventory;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public DungeonDto getCurrentDungeon() {
+        return currentDungeon;
+    }
+
+    public void setCurrentDungeon(DungeonDto currentDungeon) {
+        this.currentDungeon = currentDungeon;
+    }
+
+    public WeaponDto getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(WeaponDto weapon) {
+        this.weapon = weapon;
+    }
+
+    public MapDto getMap() {
+        return map;
+    }
+
+    public void setMap(MapDto map) {
+        this.map = map;
     }
 }

@@ -23,8 +23,8 @@ public class PlayerRepository extends  Repository<Player, Integer> {
 
     public void generateWeapons(){
 
-        Weapon weapon1 = new Weapon("Mač", 7,8);
-        Weapon weapon2 = new Weapon("Strijela", 5,15);
+        Weapon weapon1 = new Weapon("Mač", 7.0,8);
+        Weapon weapon2 = new Weapon("Strijela", 5.0,15);
         ArrayList<Weapon> weapons = new ArrayList<Weapon>(Arrays.asList(weapon1,weapon2));
 
         weapons.forEach((weapon)->{
@@ -34,6 +34,7 @@ public class PlayerRepository extends  Repository<Player, Integer> {
 
     public void moveToNextDungeon(Integer id){
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
         CriteriaQuery<Player> query = builder.createQuery(Player.class);
         Root<Player> fromDungeon = query.from(Player.class);
 
@@ -70,5 +71,20 @@ public class PlayerRepository extends  Repository<Player, Integer> {
         Player currentPlayer = currentGame.getPlayer();
 
         return currentPlayer;
+    }
+    public List<Player> getAllPlayerOnCurrentDungeonByDungeonID(Integer id){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Player> query = criteriaBuilder.createQuery(Player.class);
+        Root<Player> playerRoot = query.from(Player.class);
+        CriteriaQuery<Player> playerCriteriaQuery = query.select(playerRoot);
+
+        List<Predicate> conditions = new ArrayList<>();
+            conditions.add(criteriaBuilder.equal(playerRoot.get("currentDungeon").get("id"), id));
+
+        playerCriteriaQuery.where(conditions.toArray(new Predicate[] {}));
+
+        TypedQuery<Player> allQuery = entityManager.createQuery(playerCriteriaQuery);
+
+        return allQuery.getResultList();
     }
 }

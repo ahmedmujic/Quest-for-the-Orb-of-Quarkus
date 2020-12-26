@@ -1,14 +1,11 @@
 package ba.codecta.academy.services;
 
-import ba.codecta.academy.services.model.AttackDto;
-import ba.codecta.academy.services.model.DungeonDto;
-import ba.codecta.academy.services.model.GameDto;
-import ba.codecta.academy.services.model.PlayerDto;
+import ba.codecta.academy.services.model.*;
 
 public interface QoQService {
 
     PlayerDto addPlayer(PlayerDto player);
-    GameDto createGame(PlayerDto player);
-    DungeonDto movePlayer(Integer id);
-    DungeonDto fightWithMonster(Integer id, AttackDto attackDto);
+    NewGameDto createGame(PlayerDto player);
+    MovePlayerDto movePlayer(Integer id);
+    FightResponseDto fightWithMonster(Integer id, AttackDto attackDto);
 }

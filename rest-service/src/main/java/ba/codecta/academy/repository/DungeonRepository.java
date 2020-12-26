@@ -13,4 +13,6 @@ public class DungeonRepository extends  Repository<Dungeon, Integer>  {
     public  DungeonRepository(){
         super(Dungeon.class);
     }
+
+
 }

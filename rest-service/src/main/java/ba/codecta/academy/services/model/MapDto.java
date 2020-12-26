@@ -5,8 +5,17 @@ import java.util.List;
 
 public class MapDto {
     private Integer id;
-    private List<DungeonDto> dungeonDtos = new ArrayList<>();
-    private List<PlayerDto> playerDtos = new ArrayList<>();
+    private List<DungeonDto> dungeon = new ArrayList<>();
+    private List<PlayerDto> player = new ArrayList<>();
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
@@ -16,19 +25,19 @@ public class MapDto {
         this.id = id;
     }
 
-    public List<DungeonDto> getDungeonDtos() {
-        return dungeonDtos;
+    public List<DungeonDto> getDungeon() {
+        return dungeon;
     }
 
-    public void setDungeonDtos(List<DungeonDto> dungeonDtos) {
-        this.dungeonDtos = dungeonDtos;
+    public void setDungeon(List<DungeonDto> dungeon) {
+        this.dungeon = dungeon;
     }
 
-    public List<PlayerDto> getPlayerDtos() {
-        return playerDtos;
+    public List<PlayerDto> getPlayer() {
+        return player;
     }
 
-    public void setPlayerDtos(List<PlayerDto> playerDtos) {
-        this.playerDtos = playerDtos;
+    public void setPlayer(List<PlayerDto> player) {
+        this.player = player;
     }
 }

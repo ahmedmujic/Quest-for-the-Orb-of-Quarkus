@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "WEAPON", schema = "OrbofQuarkus")
 public class Weapon extends  ModelObject{
 
-    public Weapon(String weaponName, Integer damage, Integer weaponHealth ) {
+    public Weapon(String weaponName, Double damage, Integer weaponHealth ) {
         this.weaponName = weaponName;
         this.damage = damage;
         this.weaponHealth = weaponHealth;
@@ -33,7 +33,7 @@ public class Weapon extends  ModelObject{
     private String weaponName;
 
     @Column(name = "DAMAGE")
-    private Integer damage;
+    private Double damage;
 
     @Column(name = "WEAPON_HEALTH")
     private Integer weaponHealth;
@@ -57,7 +57,7 @@ public class Weapon extends  ModelObject{
         this.weaponName = weaponName;
     }
 
-    public Integer getDamage() {
+    public Double getDamage() {
         return damage;
     }
 
@@ -77,7 +77,7 @@ public class Weapon extends  ModelObject{
         this.players = players;
     }
 
-    public void setDamage(Integer damage) {
+    public void setDamage(Double damage) {
         this.damage = damage;
     }
 }

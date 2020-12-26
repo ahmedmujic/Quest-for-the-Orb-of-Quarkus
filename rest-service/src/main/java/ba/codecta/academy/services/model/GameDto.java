@@ -1,6 +1,7 @@
 package ba.codecta.academy.services.model;
 
 import ba.codecta.academy.repository.entity.Player;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class GameDto {
     private Integer id;
@@ -22,6 +23,7 @@ public class GameDto {
         this.id = id;
     }
 
+
     public PlayerDto getPlayer() {
         return player;
     }
@@ -30,4 +32,8 @@ public class GameDto {
         this.player = player;
     }
 
+
+    public  String message(){
+        return "Wellcome to new game";
+    }
 }

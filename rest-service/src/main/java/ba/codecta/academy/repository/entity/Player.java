@@ -1,6 +1,7 @@
 package ba.codecta.academy.repository.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -29,10 +30,10 @@ public class Player extends ModelObject{
     private Weapon weapon;
 
     @Column(name = "SCORE", nullable = false)
-    private Integer score = 0;
+    private Double score = 0.0;
 
     @Column(name="HEALTH")
-    private Integer health = 100;
+    private Double health = 1000.0;
 
     @OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
     private List<Game> games = new ArrayList<>();
@@ -43,9 +44,11 @@ public class Player extends ModelObject{
     @ManyToOne
     private Dungeon currentDungeon;
 
-    @Column(name = "HEALING_POINTS")
-    @ColumnDefault(value="100")
-    private Integer healingPoting = 100;
+    @ManyToOne
+    private Inventory playerInventory;
+
+    @Column(name = "HEALING_POTING")
+    private Double healingPoting = 100.0;
 
 
     public Dungeon getCurrentDungeon() {
@@ -72,11 +75,11 @@ public class Player extends ModelObject{
         this.weapon = weapon;
     }
 
-    public Integer getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 
@@ -88,6 +91,14 @@ public class Player extends ModelObject{
         this.games = games;
     }
 
+    public Inventory getPlayerInventory() {
+        return playerInventory;
+    }
+
+    public void setPlayerInventory(Inventory playerInventory) {
+        this.playerInventory = playerInventory;
+    }
+
     public Map getMap() {
         return map;
     }
@@ -96,19 +107,19 @@ public class Player extends ModelObject{
         this.map = map;
     }
 
-    public Integer getHealth() {
+    public Double getHealth() {
         return health;
     }
 
-    public void setHealth(Integer health) {
+    public void setHealth(Double health) {
         this.health = health;
     }
 
-    public Integer getHealingPoting() {
+    public Double getHealingPoting() {
         return healingPoting;
     }
 
-    public void setHealingPoting(Integer healingPoints) {
+    public void setHealingPoting(Double healingPoints) {
         this.healingPoting = healingPoints;
     }
 

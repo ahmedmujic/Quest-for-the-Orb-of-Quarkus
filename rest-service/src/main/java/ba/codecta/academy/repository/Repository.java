@@ -4,6 +4,7 @@ import ba.codecta.academy.repository.entity.ModelObject;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -41,14 +42,7 @@ public class Repository <T extends ModelObject, PK extends Serializable> {
 
 
     }
-    public List<T> findAll() {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(this.entityClass);
-        Root<T> root = cq.from(this.entityClass);
-        CriteriaQuery<T> all = cq.select(root);
-        TypedQuery<T> allQuery = entityManager.createQuery(all);
-        return allQuery.getResultList();
-    }
+
 
     public T findById(PK id)
     {

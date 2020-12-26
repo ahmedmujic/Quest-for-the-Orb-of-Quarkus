@@ -1,5 +1,6 @@
 package ba.codecta.academy.repository.entity;
 
+
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
