@@ -1,11 +1,15 @@
 package ba.codecta.academy.services.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapDto {
     private Integer id;
+    @JsonIgnore
     private List<DungeonDto> dungeon = new ArrayList<>();
+    @JsonIgnore
     private List<PlayerDto> player = new ArrayList<>();
     private String name;
 

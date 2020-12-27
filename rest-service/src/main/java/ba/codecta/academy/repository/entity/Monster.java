@@ -46,8 +46,16 @@ public class Monster extends ModelObject{
     @ManyToMany(mappedBy = "monsters")
     private List<Dungeon> dungeons = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "monstersItems")
+    @ManyToMany
+    @JoinTable(
+            schema = "OrbofQuarkus",
+            name = "MONSTER_ITEMS",
+            joinColumns = @JoinColumn(name = "MONSTER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ITEMS_ID")
+    )
     private List<Items> items = new ArrayList<>();
+
+
 
     public void setId(Integer id) {
         this.id = id;

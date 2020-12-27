@@ -1,7 +1,10 @@
 package ba.codecta.academy.services.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.List;
 
 public class PlayerDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -22,7 +25,15 @@ public class PlayerDto {
     private WeaponDto weapon;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private MapDto map;
+    private List<GameDto> game;
 
+    public void setGame(List<GameDto> game) {
+        this.game = game;
+    }
+
+    public List<GameDto> getGame() {
+        return game;
+    }
 
     public Integer getId() {
         return id;

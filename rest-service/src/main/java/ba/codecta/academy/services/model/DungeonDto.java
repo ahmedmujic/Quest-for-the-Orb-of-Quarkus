@@ -3,6 +3,7 @@ package ba.codecta.academy.services.model;
 
 import ba.codecta.academy.repository.entity.Items;
 import ba.codecta.academy.repository.entity.Player;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class DungeonDto {
     private String name;
     private List<MonsterDto> monsters = new ArrayList<>();
     private MapDto map;
+    @JsonIgnore
     private List<PlayerDto> players = new ArrayList<>();
     private List<ItemsDto> items = new ArrayList<>();
     private Boolean finished;

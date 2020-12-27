@@ -108,7 +108,9 @@ public class QoQServiceImpl implements QoQService {
                     String firstName = faker.witcher().monster();
                     Monster monster = new Monster(100.0, ((j + 1.0) * 3.0), firstName);
                     monster.getDungeons().add(dungeon);
-                    monster.getItems().addAll(itemsRepository.getItemsPerNumber(1, 1));
+                    List<Items> items = itemsRepository.getItemsPerNumber(1, 1);
+
+                    monster.getItems().add(items.get(0));
                     monsterRepository.save(monster);
                     dungeon.getMonsters().add(monster);
                     dungeonList.add(dungeon);
@@ -160,6 +162,14 @@ public class QoQServiceImpl implements QoQService {
         ModelMapper modelMapper = new ModelMapper();
         Game game = gameRepository.findById(id);
         Dungeon currentDungeon = gameRepository.currentDungeonId(id);
+        List<Monster> monsters = monsterRepository.getAliveMonstersByDungeon(currentDungeon);
+        if(monsters.size() == 0){
+            currentDungeon = dungeonRepository.findById(currentDungeon.getId()+1);
+            DungeonDto dungeonDto = modelMapper.map(currentDungeon, DungeonDto.class);
+            MovePlayerDto movePlayerDto = new MovePlayerDto();
+            movePlayerDto.setResponse(dungeonDto);
+            return movePlayerDto;
+        }
         Map currenMap = game.getPlayer().getMap();
         if(currentDungeon.getFinished())
             if(currenMap.getDungeons().size() == currentDungeon.getId()+1) {
@@ -170,8 +180,6 @@ public class QoQServiceImpl implements QoQService {
                 gameRepository.save(game);
                 dungeonRepository.save(currentDungeon);
             }
-        currentDungeon = dungeonRepository.findById(currentDungeon.getId()+1);
-
 
         DungeonDto dungeonDto = modelMapper.map(currentDungeon, DungeonDto.class);
         MovePlayerDto movePlayerDto = new MovePlayerDto();
@@ -182,14 +190,19 @@ public class QoQServiceImpl implements QoQService {
 
     @Override
     public FightResponseDto fightWithMonster(Integer id, AttackDto attackDto) {
+        System.out.println("uslo");
         Double score = 0.0;
 
         Dungeon currentDungeon = gameRepository.currentDungeonId(id);
-        if (currentDungeon.getMonsters() == null) {
+        Monster attackMonster = monsterRepository.findById(attackDto.getMonsterID());
+        List<Monster> aliveMonsters = monsterRepository.getAliveMonstersByDungeon(currentDungeon);
+        System.out.println("doslo");
+        if (currentDungeon.getMonsters() == null || !aliveMonsters.contains(attackMonster)) {
+            currentDungeon.setFinished(true);
+            dungeonRepository.save(currentDungeon);
             return null;
         }
         Player currentPlayer = playerRepository.getCurrentPlayerByGameId(id);
-        Monster attackMonster = monsterRepository.findById(attackDto.getMonsterID());
         Weapon currentWeapon = weaponRepository.findById(attackDto.getWeaponID());
         currentPlayer.setWeapon(currentWeapon);
 
@@ -231,6 +244,62 @@ public class QoQServiceImpl implements QoQService {
         }
 
         return fightResponseDto;
+    }
+
+    @Override
+    public PlayerDto getPlayerById(Integer id) {
+        Player player = playerRepository.findById(id);
+        ModelMapper modelMapper = new ModelMapper();
+        PlayerDto playerDto = modelMapper.map(player, PlayerDto.class);
+        return  playerDto;
+    }
+
+    @Override
+    public FleeResponseDto fleeDungeon(Integer id) {
+        Player player = playerRepository.getCurrentPlayerByGameId(id);
+        Dungeon dungeon = player.getCurrentDungeon();
+        Double healthLose = 0.0;
+        Double scoreLose = 0.0;
+        for(int i=0;i<dungeon.getMonsters().size();i++){
+            healthLose += dungeon.getMonsters().get(i).getDamage();
+            scoreLose += dungeon.getMonsters().get(i).getHealth();
+        }
+        player.setHealth(player.getHealth()-healthLose);
+        player.setScore(player.getScore()-scoreLose);
+        Dungeon currentDungeon = dungeonRepository.findById(player.getCurrentDungeon().getId()+1);
+        player.setCurrentDungeon(currentDungeon);
+        playerRepository.save(player);
+        FleeResponseDto fleeResponseDto = new FleeResponseDto(
+                dungeon.getId(),
+               modelMapper.map(player, PlayerDto.class),
+                scoreLose,
+                healthLose
+
+        );
+        return fleeResponseDto;
+    }
+
+    @Override
+    public List<ItemsDto> collectItems(Integer id) {
+        Player player = playerRepository.getCurrentPlayerByGameId(id);
+        Dungeon dungeon = player.getCurrentDungeon();
+        if(dungeon.getMonsters().size()== 0){
+            player.getPlayerInventory().getItems().addAll(dungeon.getItems());
+            List<ItemsDto> itemsDtos = mapAll(dungeon.getItems(), ItemsDto.class);
+            return  itemsDtos;
+
+        }
+        else return null;
+
+    }
+
+    @Override
+    public WeaponDto choosePlayerWeapon(Integer id, Integer weaponId) {
+        Player player = playerRepository.getCurrentPlayerByGameId(id);
+        Weapon weapon = weaponRepository.findById(weaponId);
+        player.setWeapon(weapon);
+        playerRepository.save(player);
+        return modelMapper.map(weapon, WeaponDto.class);
     }
 
     public Double randomDmgForAttack() {

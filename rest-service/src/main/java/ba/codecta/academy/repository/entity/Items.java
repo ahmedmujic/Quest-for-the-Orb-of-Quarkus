@@ -27,14 +27,8 @@ public class Items extends ModelObject{
     @ManyToMany(mappedBy = "items")
     private List<Inventory> inventories = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            schema = "OrbofQuarkus",
-            name = "ITEMS_MONSTER",
-            joinColumns = @JoinColumn(name = "ITEMS_ID"),
-            inverseJoinColumns = @JoinColumn(name = "MONSTER_ID")
-    )
-    private List<Monster> monstersItems = new ArrayList<>();
+    @ManyToMany(mappedBy = "items")
+    private List<Monster> monsters = new ArrayList<>();
 
     public List<Inventory> getInventories() {
         return inventories;
@@ -44,12 +38,12 @@ public class Items extends ModelObject{
         this.inventories = inventories;
     }
 
-    public List<Monster> getMonstersItems() {
-        return monstersItems;
+    public List<Monster> getMonsters() {
+        return monsters;
     }
 
-    public void setMonstersItems(List<Monster> monstersItems) {
-        this.monstersItems = monstersItems;
+    public void setMonsters(List<Monster> monsters) {
+        this.monsters = monsters;
     }
 
     public List<Dungeon> getDungeons() {

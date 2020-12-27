@@ -3,6 +3,7 @@ package ba.codecta.academy.repository;
 import ba.codecta.academy.repository.entity.Dungeon;
 import ba.codecta.academy.repository.entity.Game;
 import ba.codecta.academy.repository.entity.Monster;
+import ba.codecta.academy.repository.entity.Player;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.TypedQuery;
@@ -23,8 +24,25 @@ public class MonsterRepository extends  Repository<Monster, Integer>{
     }
 
 
-
     public Monster attackMonsterById(Integer id){
         return null;
     }
+
+    public List<Monster> getAliveMonstersByDungeon(Dungeon dungeon){
+
+       List<Monster> monsters = dungeon.getMonsters();
+
+       List<Monster> aliveMonsters = new ArrayList<>();
+
+       monsters.forEach(monster -> {
+           if(monster.getAlive()){
+               System.out.println(monster.getId());
+               aliveMonsters.add(monster);
+           }
+       });
+
+       return  aliveMonsters;
+    }
+
+
 }
