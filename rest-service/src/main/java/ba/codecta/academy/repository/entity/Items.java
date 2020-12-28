@@ -24,18 +24,18 @@ public class Items extends ModelObject{
     @ManyToMany(mappedBy = "items")
     private List<Dungeon> dungeons = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "items")
-    private List<Inventory> inventories = new ArrayList<>();
+    @OneToMany(mappedBy = "items")
+    private List<InventoryItems> inventoryAsoc;
 
     @ManyToMany(mappedBy = "items")
     private List<Monster> monsters = new ArrayList<>();
 
-    public List<Inventory> getInventories() {
-        return inventories;
+    public List<InventoryItems> getInventoryAsoc() {
+        return inventoryAsoc;
     }
 
-    public void setInventories(List<Inventory> inventories) {
-        this.inventories = inventories;
+    public void setInventoryAsoc(List<InventoryItems> inventoryAsoc) {
+        this.inventoryAsoc = inventoryAsoc;
     }
 
     public List<Monster> getMonsters() {

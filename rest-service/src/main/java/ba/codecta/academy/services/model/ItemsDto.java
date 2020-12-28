@@ -9,7 +9,16 @@ public class ItemsDto {
     private HealingPotionDto healingPotion;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private PowerUpsDto powerUps;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer quantity;
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 
     public HealingPotionDto getHealingPotion() {
         return healingPotion;

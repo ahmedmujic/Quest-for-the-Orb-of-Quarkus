@@ -9,7 +9,7 @@ import java.util.Objects;
 public abstract  class ModelObject<K> {
 
 
-    public abstract Integer getId();
+    public abstract K getId();
 
     @Column(name="CREATED_ON")
     protected LocalDateTime createdOn;

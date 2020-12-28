@@ -9,7 +9,7 @@ public class PowerUpsDto extends ItemsDto{
     }
 
     public void setPowerValue(Double powerValue) {
-        this.powerValue = powerValue;
+         this.powerValue = powerValue;
     }
 
     public String getName() {

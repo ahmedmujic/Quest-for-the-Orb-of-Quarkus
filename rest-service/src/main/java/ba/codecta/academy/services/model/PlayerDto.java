@@ -14,7 +14,7 @@ public class PlayerDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double health = 1000.0;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer score = 0;
+    private Double score = 0.0;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private InventoryDto playerInventory;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -22,10 +22,20 @@ public class PlayerDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private DungeonDto currentDungeon;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnore
     private WeaponDto weapon;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private MapDto map;
+    @JsonIgnore
     private List<GameDto> game;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer gameId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer map_Id;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer dungeon_Id;
+
+    private Double powerBoost = 1.0;
 
     public void setGame(List<GameDto> game) {
         this.game = game;
@@ -33,6 +43,31 @@ public class PlayerDto {
 
     public List<GameDto> getGame() {
         return game;
+    }
+
+
+    public Integer getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
+    }
+
+    public Integer getMap_Id() {
+        return map_Id;
+    }
+
+    public void setMap_Id(Integer mapId) {
+        this.map_Id = mapId;
+    }
+
+    public Integer getDungeon_Id() {
+        return dungeon_Id;
+    }
+
+    public void setDungeon_Id(Integer dungeonId) {
+        this.dungeon_Id = dungeonId;
     }
 
     public Integer getId() {
@@ -59,11 +94,19 @@ public class PlayerDto {
         this.health = health;
     }
 
-    public Integer getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public Double getPowerBoost() {
+        return powerBoost;
+    }
+
+    public void setPowerBoost(Double powerBoost) {
+        this.powerBoost = powerBoost;
+    }
+
+    public void setScore(Double score) {
         this.score = score;
     }
 

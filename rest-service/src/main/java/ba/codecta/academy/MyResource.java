@@ -53,7 +53,7 @@ public class MyResource {
             uriBuilder.path(Integer.toString(currentDungeonDto.getDungeonId()));
             return Response.created(uriBuilder.build()).entity(currentDungeonDto).build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(new Error("Bad request","Bad request")).build();
     }
 
     @POST
@@ -66,7 +66,7 @@ public class MyResource {
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
             return Response.created(uriBuilder.build()).entity(currentDungeonDto).build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(new Error("Bad request","You can not fight with the monster if your weapon is too weak")).build();
     }
     @POST
     @Path("/game/{id}/flee")
@@ -93,6 +93,8 @@ public class MyResource {
         return Response.ok(playerDto).build();
     }
 
+
+
     @POST
     @Path("/game/{id}/collect-items")
     @Consumes({MediaType.APPLICATION_JSON})
@@ -107,16 +109,29 @@ public class MyResource {
     }
 
     @POST
-    @Path("/game/{id}/change-weapon")
+    @Path("/player/{id}/heal/{healId}")
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response changePlayerWeapon(@PathParam("id") Integer gameId, Integer weaponId,@Context UriInfo uriInfo)
+    public Response healPlayer(@PathParam("id") Integer playerId,@PathParam("healId") Integer healId,@Context UriInfo uriInfo)
     {
-        WeaponDto weaponDto = QoQService.choosePlayerWeapon(gameId, weaponId);
+        PlayerDto weaponDto = QoQService.healPlayer(playerId, healId);
         if(weaponDto != null){
             UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
             return Response.ok(uriBuilder.build()).entity(weaponDto).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();
     }
+    @POST
+    @Path("/player/{id}/power-up/{weaponId}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response powerWeapon(@PathParam("id") Integer playerId,@PathParam("weaponId") Integer powerId,@Context UriInfo uriInfo)
+    {
+        PlayerDto weaponDto = QoQService.powerUp(playerId, powerId);
+        if(weaponDto != null){
+            UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+            return Response.ok(uriBuilder.build()).entity(weaponDto).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity(new Error("VD-1","Bad request")).build();
+    }
+
 
 }

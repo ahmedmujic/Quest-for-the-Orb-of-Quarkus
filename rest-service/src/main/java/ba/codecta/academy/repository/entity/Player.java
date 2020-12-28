@@ -25,12 +25,17 @@ public class Player extends ModelObject{
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    @Column(name="POWER_BOOST",nullable = false)
+    private Double powerBoost = 1.0;
 
     @ManyToOne()
     private Weapon weapon;
 
     @Column(name = "SCORE", nullable = false)
     private Double score = 0.0;
+
+    @Column(name = "COINS", nullable = false)
+    private Integer coins = 10;
 
     @Column(name="HEALTH")
     private Double health = 1000.0;
@@ -65,6 +70,22 @@ public class Player extends ModelObject{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Double getPowerBoost() {
+        return powerBoost;
+    }
+
+    public void setPowerBoost(Double powerBoost) {
+        this.powerBoost = powerBoost;
+    }
+
+    public Integer getCoins() {
+        return coins;
+    }
+
+    public void setCoins(Integer coins) {
+        this.coins = coins;
     }
 
     public Weapon getWeapon() {

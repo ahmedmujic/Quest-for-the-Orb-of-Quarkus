@@ -41,6 +41,9 @@ public class Weapon extends  ModelObject{
     private List<Player> players = new ArrayList<>();
 
 
+    @ManyToMany(mappedBy = "weapons")
+    private List<Inventory> inventories = new ArrayList<>();
+
     public Integer getId() {
         return id;
     }
@@ -75,6 +78,14 @@ public class Weapon extends  ModelObject{
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public List<Inventory> getInventories() {
+        return inventories;
+    }
+
+    public void setInventories(List<Inventory> inventories) {
+        this.inventories = inventories;
     }
 
     public void setDamage(Double damage) {

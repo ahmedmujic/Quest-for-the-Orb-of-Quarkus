@@ -2,7 +2,7 @@ package ba.codecta.academy.services.model;
 
 public class FleeResponseDto {
     private Integer dungeonId;
-    private PlayerDto playerDto;
+    private PlayerDto player;
     private Double lostScore;
     private Double lostHealth;
 
@@ -11,7 +11,7 @@ public class FleeResponseDto {
 
     public FleeResponseDto(Integer dungeonId, PlayerDto playerDto, Double lostScore, Double lostHealth) {
         this.dungeonId = dungeonId;
-        this.playerDto = playerDto;
+        this.player = playerDto;
         this.lostScore = lostScore;
         this.lostHealth = lostHealth;
     }
@@ -25,11 +25,11 @@ public class FleeResponseDto {
     }
 
     public PlayerDto getPlayerDto() {
-        return playerDto;
+        return player;
     }
 
     public void setPlayerDto(PlayerDto playerDto) {
-        this.playerDto = playerDto;
+        this.player = playerDto;
     }
 
     public Double getLostScore() {

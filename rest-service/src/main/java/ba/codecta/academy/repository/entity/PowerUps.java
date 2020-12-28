@@ -17,11 +17,11 @@ public class PowerUps extends  Items{
     private String name;
 
     @Column(name="POWER_VALUE", nullable = false)
-    private Double healthAddition;
+    private Double powerValue;
 
     public PowerUps(String name, Double healthAddition) {
         this.name = name;
-        this.healthAddition = healthAddition;
+        this.powerValue = healthAddition;
     }
 
     public PowerUps() {
@@ -36,14 +36,11 @@ public class PowerUps extends  Items{
         this.name = name;
     }
 
-    public Double getHealthAddition() {
-        return healthAddition;
+    public Double getPowerValue() {
+        return powerValue;
     }
 
-    public void setHealthAddition(Double healthAddition) {
-        this.healthAddition = healthAddition;
+    public void setPowerValue(Double powerValue) {
+        this.powerValue = powerValue;
     }
-
-
-
 }

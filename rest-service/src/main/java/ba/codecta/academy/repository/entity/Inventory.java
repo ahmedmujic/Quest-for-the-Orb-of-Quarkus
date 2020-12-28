@@ -12,19 +12,23 @@ public class Inventory extends ModelObject {
             sequenceName = "INVENTORY_SEQ",
             schema = "OrbofQuarkus",
             allocationSize = 1)
+
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "inventorySeq")
     @Id
     @Column(name="ID", nullable = false)
     private Integer id;
 
+    @OneToMany(mappedBy = "inventory")
+    private List<InventoryItems> itemsAsoc;
+
     @ManyToMany
     @JoinTable(
             schema = "OrbofQuarkus",
-            name = "INVENTORY_ITEM",
+            name = "INVENTORY_WEAPON",
             joinColumns = @JoinColumn(name = "INVENTORY_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ITEMS_ID")
+            inverseJoinColumns = @JoinColumn(name = "WEAPON_ID")
     )
-    private List<Items> items = new ArrayList<>();
+    private List<Weapon> weapons = new ArrayList<>();
 
     @OneToMany(mappedBy = "playerInventory", fetch = FetchType.LAZY)
     private List<Player> players = new ArrayList<>();
@@ -33,12 +37,12 @@ public class Inventory extends ModelObject {
         this.id = id;
     }
 
-    public List<Items> getItems() {
-        return items;
+    public List<InventoryItems> getItemsAsoc() {
+        return itemsAsoc;
     }
 
-    public void setItems(List<Items> items) {
-        this.items = items;
+    public void setItemsAsoc(List<InventoryItems> itemsAsoc) {
+        this.itemsAsoc = itemsAsoc;
     }
 
     public List<Player> getPlayers() {
@@ -49,8 +53,17 @@ public class Inventory extends ModelObject {
         this.players = players;
     }
 
+    public List<Weapon> getWeapons() {
+        return weapons;
+    }
+
+    public void setWeapons(List<Weapon> weapons) {
+        this.weapons = weapons;
+    }
+
     @Override
     public Integer getId() {
-        return null;
+        return id;
     }
+
 }
