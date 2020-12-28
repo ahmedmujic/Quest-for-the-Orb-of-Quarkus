@@ -14,4 +14,5 @@ public class MapRepository extends  Repository<Map, Integer>{
     public  MapRepository(){
         super(Map.class);
     }
+
 }

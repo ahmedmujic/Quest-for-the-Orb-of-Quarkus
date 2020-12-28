@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @Transactional
 public class QoQServiceImpl implements QoQService {
+    private Integer counter= 0;
     @Inject
     PlayerRepository playerRepository;
     @Inject
@@ -56,7 +57,6 @@ public class QoQServiceImpl implements QoQService {
         inventoryRepository.save(inventory);
 
 
-        System.out.println("inventory id"+inventory.getId());
         //create players inital weapon
         Weapon weapon = new Weapon("Knife", 5.0, 10000);
         inventory.getWeapons().add(weapon);
@@ -69,76 +69,90 @@ public class QoQServiceImpl implements QoQService {
         playerEntity.setWeapon(weapon);
         playerEntity.setPlayerInventory(inventory);
 
-
         //save player
         playerEntity = playerRepository.save(playerEntity);
 
-
+        //asign player to game
         Game gameEntity = new Game();
         gameEntity.setPlayer(playerEntity);
         gameEntity = gameRepository.add(gameEntity);
 
-
-        int max;
-        int min;
-
+        // faker - name generator
         Faker faker = new Faker();
         List<Dungeon> dungeonList = new ArrayList<>();
         //generating monsters with default health, damage and random name
 
-        for (int l = 0; l < 2; l++) {
-            Map map = new Map();
-            map.setName(faker.harryPotter().house());
 
-            mapRepository.save(map);
-            for (int j = 0; j < 5; j++) {
-                Dungeon dungeon = new Dungeon();
-                String dungeonName = faker.harryPotter().house();
-                dungeon.setName(dungeonName);
-                dungeon.setMap(map);
+        if(counter == 0) {
+            counter++;
+            // generating maps
+            for (int l = 0; l < 2; l++) {
+                Map map = new Map();
+                map.setName(faker.harryPotter().house());
 
-                dungeonRepository.save(dungeon);
-                if (l == 0) {
-                    playerEntity.setMap(map);
-                    playerEntity.setCurrentDungeon(dungeon);
-                }
-                for (int i = 0; i < j+2; i++) {
-                    String firstName = faker.witcher().monster();
-                    Monster monster = new Monster(100.0, ((j + 1.0) * 3.0), firstName);
-                    monster.getDungeons().add(dungeon);
-                    List<Items> items = itemsRepository.getItemsPerNumber(1, 1);
+                mapRepository.save(map);
+                // generating dungeon for map
+                for (int j = 0; j < 5; j++) {
+                    Dungeon dungeon = new Dungeon();
+                    String dungeonName = faker.harryPotter().house();
+                    dungeon.setName(dungeonName);
+                    dungeon.setMap(map);
 
-                    monster.getItems().add(items.get(0));
-                    monsterRepository.save(monster);
-                    dungeon.getMonsters().add(monster);
-                    dungeonList.add(dungeon);
                     dungeonRepository.save(dungeon);
-                }
-                int random = (int) (Math.random() * j+1 + 1);
-                for (int k = 0; k < random; k++) {
-                    if (k % 2 == 0) {
-                        PowerUps powerUps = new PowerUps(faker.food().fruit(), 20.0 * (k + 5));
-                        powerUps.getDungeons().add(dungeon);
-                        itemsRepository.save(powerUps);
-                    } else {
-                        HealingPotion healingPotion = new HealingPotion( faker.medical().medicineName(), 20.0 * (k + 1));
-                        healingPotion.getDungeons().add(dungeon);
-                        itemsRepository.save(healingPotion);
-                        dungeon.getItems().add(healingPotion);
+                    if (l == 0) {
+                        playerEntity.setMap(map);
+                        playerEntity.setCurrentDungeon(dungeon);
                     }
+                    // generate monsters 1. dungeon 2 monsters 2. dungeon 3 monsters etc.
+                    for (int i = 0; i < j + 2; i++) {
+                        String firstName = faker.witcher().monster();
+                        Monster monster = new Monster(100.0, ((j + 1.0) * 3.0), firstName);
+                        monster.getDungeons().add(dungeon);
+                        // random items
+                        List<Items> items = itemsRepository.getItemsPerNumber(1, 1);
 
+                        monster.getItems().addAll(items);
+                        monsterRepository.save(monster);
+                        dungeon.getMonsters().add(monster);
+                        dungeonList.add(dungeon);
+                        dungeonRepository.save(dungeon);
+                    }
+                    int random = (int) (Math.random() * j + 1 + 1);
+                    // generate dungeon items
+                    for (int k = 0; k < random; k++) {
+                        if (k % 2 == 0) {
+                            PowerUps powerUps = new PowerUps(faker.food().fruit(), 20.0 * (k + 5));
+                            powerUps.getDungeons().add(dungeon);
+                            itemsRepository.save(powerUps);
+                        } else {
+                            HealingPotion healingPotion = new HealingPotion(faker.medical().medicineName(), 20.0 * (k + 1));
+                            healingPotion.getDungeons().add(dungeon);
+                            itemsRepository.save(healingPotion);
+                            dungeon.getItems().add(healingPotion);
+                        }
+
+                    }
+                    dungeon.setMap(map);
+                    dungeonRepository.save(dungeon);
+                    map.getDungeons().add(dungeon);
                 }
-                dungeon.setMap(map);
-                dungeonRepository.save(dungeon);
-                map.getDungeons().add(dungeon);
+
+                playerEntity.setCurrentDungeon(dungeonRepository.findById(1));
+                playerRepository.save(playerEntity);
+                map.getPlayers().add(playerEntity);
+
+                mapRepository.save(map);
             }
+        }else{
 
+            Map map = mapRepository.findById(2);
+            playerEntity.setMap(map);
             playerEntity.setCurrentDungeon(dungeonRepository.findById(1));
+            playerEntity.getMap().getPlayers().add(playerEntity);
             playerRepository.save(playerEntity);
-            map.getPlayers().add(playerEntity);
 
-            mapRepository.save(map);
         }
+        // mapping player
         PlayerDto playerDto = new PlayerDto();
         playerDto.setId(playerEntity.getId());
         playerDto.setCurrentDungeon(modelMapper.map(playerEntity.getCurrentDungeon(), DungeonDto.class));
@@ -149,21 +163,19 @@ public class QoQServiceImpl implements QoQService {
         playerDto.setHealth(player.getHealth());
         playerDto.setCurrentDungeon(player.getCurrentDungeon());
 
-
-
-
+        //mapping new game dto
         NewGameDto newGameDto = new NewGameDto();
         newGameDto.setGameId(gameEntity.getId());
 
         List<ItemsDto> items = mapAll(inventoryItemsRepository.getItemsByInventoryId(playerEntity.getPlayerInventory().getId()), ItemsDto.class);
-        System.out.println(items);
-       InventoryDto inventoryDto  = new InventoryDto();
-       inventoryDto.setItems(items);
 
-       inventoryDto.setWeapons(mapAll(playerEntity.getPlayerInventory().getWeapons(), WeaponDto.class));
-       inventoryDto.setId(playerEntity.getPlayerInventory().getId());
+        InventoryDto inventoryDto  = new InventoryDto();
+        inventoryDto.setItems(items);
 
-       playerDto.setPlayerInventory(inventoryDto);
+        inventoryDto.setWeapons(mapAll(playerEntity.getPlayerInventory().getWeapons(), WeaponDto.class));
+        inventoryDto.setId(playerEntity.getPlayerInventory().getId());
+
+        playerDto.setPlayerInventory(inventoryDto);
         newGameDto.setPlayer(playerDto);
 
         return newGameDto;
@@ -177,21 +189,21 @@ public class QoQServiceImpl implements QoQService {
     @Override
     public MovePlayerDto movePlayer(Integer id) {
 
-        ModelMapper modelMapper = new ModelMapper();
         Game game = gameRepository.findById(id);
         Dungeon currentDungeon = gameRepository.currentDungeonId(id);
+        // cant move if the player is on the last dungeon
         if(currentDungeon.getId().equals(10)) return  null;
         List<Monster> monsters = monsterRepository.getAliveMonstersByDungeon(currentDungeon);
+        //move if there is not monsters player can move
         if(monsters.size() == 0){
 
-            System.out.println(currentDungeon.getId());
-            System.out.println("prvi uslov");
+            //get next dungeon
             currentDungeon = dungeonRepository.findById(currentDungeon.getId()+1);
-            System.out.println(currentDungeon.getId());
             DungeonDto dungeonDto = new DungeonDto();
             dungeonDto.setMonsters(mapAll(currentDungeon.getMonsters(), MonsterDto.class));
             dungeonDto.setId(currentDungeon.getId());
             dungeonDto.setItems(mapAll(currentDungeon.getItems(), ItemsDto.class));
+            //set dungeon to player
             game.getPlayer().setCurrentDungeon(currentDungeon);
             playerRepository.save(game.getPlayer());
             MovePlayerDto movePlayerDto = new MovePlayerDto();
@@ -200,10 +212,10 @@ public class QoQServiceImpl implements QoQService {
             return movePlayerDto;
         }
         Map currenMap = game.getPlayer().getMap();
+
         if(currentDungeon.getFinished())
-            System.out.println("drugi uslov");
+            //next map
             if(currenMap.getDungeons().size() == currentDungeon.getId()+1) {
-                System.out.println("treci uslov");
                 currenMap = mapRepository.findById(currenMap.getId() + 1);
                 currentDungeon = dungeonRepository.findById(currentDungeon.getId() + 1);
                 game.getPlayer().setCurrentDungeon(currentDungeon);
@@ -212,6 +224,7 @@ public class QoQServiceImpl implements QoQService {
                 dungeonRepository.save(currentDungeon);
             }
 
+        //map response
         DungeonDto dungeonDto = new DungeonDto();
         dungeonDto.setMonsters(mapAll(currentDungeon.getMonsters(), MonsterDto.class));
         dungeonDto.setId(currentDungeon.getId());
@@ -223,18 +236,11 @@ public class QoQServiceImpl implements QoQService {
 
     @Override
     public FightResponseDto fightWithMonster(Integer id, AttackDto attackDto) {
-        System.out.println("uslo");
         Double score = 0.0;
-
+        //get dungeon by id
         Dungeon currentDungeon = gameRepository.currentDungeonId(id);
+        //
         Monster attackMonster = monsterRepository.findById(attackDto.getMonsterID());
-        List<Monster> aliveMonsters = monsterRepository.getAliveMonstersByDungeon(currentDungeon);
-
-       /* if (currentDungeon.getMonsters() == null || !aliveMonsters.contains(attackMonster)) {
-            currentDungeon.setFinished(true);
-            dungeonRepository.save(currentDungeon);
-            return null;
-        }*/
 
 
         Player currentPlayer = playerRepository.getCurrentPlayerByGameId(id);
@@ -243,7 +249,7 @@ public class QoQServiceImpl implements QoQService {
 
 
         Integer weaponHealth = currentPlayer.getWeapon().getWeaponHealth();
-
+            //fight
             while (currentPlayer.getHealth() > 0 && attackMonster.getHealth() > 0) {
                 currentPlayer.setScore(currentPlayer.getScore() + attackMonster.getHealth());
                 attackMonster.setHealth((attackMonster.getHealth() - currentPlayer.getWeapon().getDamage()*randomDmgForAttack())* currentPlayer.getPowerBoost());
@@ -252,36 +258,37 @@ public class QoQServiceImpl implements QoQService {
                     currentPlayer.setHealth(currentPlayer.getHealth() - attackMonster.getDamage()*randomDmgForAttack());
 
             }
-
+            // set score rounded to 2 decimals
         currentPlayer.setScore(Math.round(currentPlayer.getScore()*100d) / 100d);
         currentPlayer.setHealth(Math.round(currentPlayer.getHealth()*100d) / 100d);
         currentWeapon.setWeaponHealth(weaponHealth);
         weaponRepository.save(currentWeapon);
         FightResponseDto fightResponseDto = new FightResponseDto();
 
+        //player win
         if (currentPlayer.getHealth() > 0) {
             attackMonster.setAlive(false);
             inventoryItemsRepository.asignItems(currentPlayer.getPlayerInventory(), attackMonster.getItems());
-            //currentPlayer.getPlayerInventory().getItems().addAll(attackMonster.getItems());
+            //generate fight response
             fightResponseDto = new FightResponseDto(
-                    "Good job you killed"+attackMonster.getName(),
+                    "Good job you killed "+attackMonster.getName(),
                     Math.round(currentPlayer.getHealth()*100d) / 100d,
                     attackMonster.getName(),
                     modelMapper.map(currentPlayer.getWeapon(),WeaponDto.class),
                     mapAll(attackMonster.getItems(),ItemsDto.class),
                     true);
 
-
             attackMonster.setAlive(false);
+            //if there is not any monster dungeon is finished
             if(dungeonRepository.isDungeonEmpty(currentDungeon.getId()) == true) {
                 currentDungeon.setFinished(true);
             }
             dungeonRepository.save(currentDungeon);
             monsterRepository.save(attackMonster);
             playerRepository.save(currentPlayer);
-            System.out.println("finished");
-            System.out.println(currentDungeon.getFinished());
-        } else if (attackMonster.getHealth() > 0 && currentPlayer.getHealth() < 0) {
+        }
+        // player lose
+        else if (attackMonster.getHealth() > 0 && currentPlayer.getHealth() < 0) {
             fightResponseDto = new FightResponseDto(
                     attackMonster.getName()+"killed you.",
                     0.0,
@@ -290,18 +297,16 @@ public class QoQServiceImpl implements QoQService {
                     null,
                     false);
         }
+        //last dungeon
         if(currentDungeon.getId().equals(10) && currentPlayer.getHealth() > 0){
-            System.out.println("kraj1");
             boolean finished = true;
             for(int i=0;i<currentDungeon.getMonsters().size();i++){
                 Monster monster = currentDungeon.getMonsters().get(i);
                 if(monster.getAlive()) finished = false;
             }
             if(finished == true){
-                System.out.println("kraj2");
                 fightResponseDto.setMessage("Good job you won Orb od Quarkus");
             }
-
         }
         return fightResponseDto;
     }
@@ -318,6 +323,7 @@ public class QoQServiceImpl implements QoQService {
         inventoryDto.setWeapons(mapAll(player.getPlayerInventory().getWeapons(), WeaponDto.class));
         inventoryDto.setItems(mapAll(inventoryItemsRepository.getItemsByInventoryId(player.getPlayerInventory().getId()), ItemsDto.class));
         for(int i=0;i<inventoryDto.getItems().size();i++){
+            // get player items
             inventoryDto.getItems().get(i).setQuantity(inventoryItemsRepository.getQuantityByItemId(inventoryDto.getItems().get(i).getId()));
         }
 
@@ -339,12 +345,15 @@ public class QoQServiceImpl implements QoQService {
         Dungeon dungeon = player.getCurrentDungeon();
         Double healthLose = 0.0;
         Double scoreLose = 0.0;
+        //losing points
         for(int i=0;i<dungeon.getMonsters().size();i++){
             healthLose += dungeon.getMonsters().get(i).getDamage();
             scoreLose += dungeon.getMonsters().get(i).getHealth();
         }
-        player.setHealth(player.getHealth()-healthLose);
-        player.setScore(player.getScore()-scoreLose);
+        // setting health and score
+        player.setHealth(Math.round((player.getHealth()-healthLose)*100d) / 100d);
+        player.setScore(Math.round((player.getScore()-scoreLose)*100d) / 100d);
+        // get player
         Dungeon currentDungeon = dungeonRepository.findById(player.getCurrentDungeon().getId()+1);
         player.setCurrentDungeon(currentDungeon);
         playerRepository.save(player);
@@ -379,9 +388,8 @@ public class QoQServiceImpl implements QoQService {
     public List<ItemsDto> collectItems(Integer id) {
         Player player = playerRepository.getCurrentPlayerByGameId(id);
         Dungeon dungeon = player.getCurrentDungeon();
+        //collect items if the dungeon finished
         if(dungeon.getFinished()){
-           // player.getPlayerInventory().getItems().addAll(dungeon.getItems());
-           // List<Items> items = inventoryItemsRepository.getItemsByInventoryId(player.getPlayerInventory().getId());
             List<Items> items1 = dungeon.getItems();
             inventoryItemsRepository.asignItems(player.getPlayerInventory(), items1);
             List<ItemsDto> itemsDtos = mapAll(items1,ItemsDto.class);
@@ -403,7 +411,9 @@ public class QoQServiceImpl implements QoQService {
         for(int i=0;i<items.size();i++){
             if(items.get(i).getId().equals(healId)){
                 HealingPotion healingPotion = (HealingPotion) items.get(i);
+                //set player health
                 player.setHealth(player.getHealth()+healingPotion.getHealthAddition());
+                //remove item from inventory
                 boolean itemValidation = inventoryItemsRepository.removeItem(player.getPlayerInventory().getId(),items.get(i));
                 if(itemValidation)
                 playerRepository.save(player);
@@ -411,11 +421,14 @@ public class QoQServiceImpl implements QoQService {
                     return null;
             }
         }
+        //mapping player
         PlayerDto playerDto = new PlayerDto();
         playerDto.setName(player.getName());
         playerDto.setWeapon(modelMapper.map(player.getWeapon(),WeaponDto.class));
         playerDto.setName(playerDto.getName());
         playerDto.setId(playerDto.getId());
+        playerDto.setPowerBoost(null);
+        playerDto.setScore(null);
         playerDto.setHealth(player.getHealth());
 
         return playerDto;
@@ -423,20 +436,28 @@ public class QoQServiceImpl implements QoQService {
 
     @Override
     public PlayerDto powerUp(Integer playerId, Integer powerId) {
-        System.out.println("USLO U POJACAVANJE");
+
         Player player = playerRepository.findById(playerId);
         PowerUps powerUps = (PowerUps) itemsRepository.findById(powerId);
 
         player.setPowerBoost(player.getPowerBoost() + (player.getPowerBoost()/powerUps.getPowerValue()));
 
+        boolean itemValidation = inventoryItemsRepository.removeItem(player.getPlayerInventory().getId(),powerUps);
+        //validating power item
+        if(itemValidation) {
+            playerRepository.save(player);
+            PlayerDto playerDto = new PlayerDto();
+            playerDto.setName(player.getName());
+            playerDto.setHealth(null);
+            playerDto.setScore(null);
+            playerDto.setPowerBoost(player.getPowerBoost());
+            playerDto.setId(playerDto.getId());
+            return playerDto;
+        }
+        else
+            return null;
 
-        playerRepository.save(player);
-        PlayerDto playerDto = new PlayerDto();
-        playerDto.setName(player.getName());
-        playerDto.setPowerBoost(player.getPowerBoost());
-        playerDto.setId(playerDto.getId());
 
-        return playerDto;
     }
 
     public Double randomDmgForAttack() {

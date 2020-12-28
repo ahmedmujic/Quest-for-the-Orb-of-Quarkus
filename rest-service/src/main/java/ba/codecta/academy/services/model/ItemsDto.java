@@ -1,9 +1,11 @@
 package ba.codecta.academy.services.model;
 
 import ba.codecta.academy.repository.entity.PowerUps;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class ItemsDto {
+    @JsonIgnore
     private Integer id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private HealingPotionDto healingPotion;

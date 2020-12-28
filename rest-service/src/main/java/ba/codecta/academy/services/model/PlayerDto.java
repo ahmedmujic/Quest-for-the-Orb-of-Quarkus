@@ -10,6 +10,7 @@ public class PlayerDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnore
     private Double healingPoting = 100.0;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double health = 1000.0;
@@ -34,7 +35,7 @@ public class PlayerDto {
     private Integer map_Id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer dungeon_Id;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double powerBoost = 1.0;
 
     public void setGame(List<GameDto> game) {

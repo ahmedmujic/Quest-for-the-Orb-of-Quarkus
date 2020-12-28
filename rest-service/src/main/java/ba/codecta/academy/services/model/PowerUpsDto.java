@@ -1,6 +1,7 @@
 package ba.codecta.academy.services.model;
 
 public class PowerUpsDto extends ItemsDto{
+    private Integer id;
     private Double powerValue;
     private String name;
 
@@ -10,6 +11,16 @@ public class PowerUpsDto extends ItemsDto{
 
     public void setPowerValue(Double powerValue) {
          this.powerValue = powerValue;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
